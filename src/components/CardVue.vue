@@ -46,7 +46,7 @@ export default {
   }
 }
 </script>
-<style>
+<style scoped>
 .bottom {
   background-color: white;
   border-radius: 0px 0px 16px 16px;
@@ -61,6 +61,9 @@ export default {
   border-radius: 16px;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.25);  
   height: 332px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 4rem;
   width: 243px;
 }
 .city {
