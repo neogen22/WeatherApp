@@ -1,8 +1,8 @@
 <template>
   <div class="card">
-    <div class="temperature">{{ temperatureNow }}°</div>
-    <div class="city">Kondopoga</div>
-    <div class="bottom">
+    <div class="temperature">{{ temperatureNow }}°</div>    
+    <div class="city">{{city}}</div>
+    <div class="bottom">      
       <div class="date">{{ weekday }}, {{ day }} {{ month }}</div>
       <div class="flex">
         <div class="weather">{{ weather }}</div>
@@ -17,9 +17,10 @@ import { DateTime } from 'luxon'
 export default {
   data() {
     return {
-      city: 'Kondopoga',      
+      city: null,      
       day: DateTime.now().setLocale('en-GB').day,
-      icon: null,
+      icon: null,      
+      location: null,
       month: DateTime.now().setLocale('en-GB').monthLong,
       temperatureMax: null,
       temperatureMin: null,
@@ -29,20 +30,39 @@ export default {
     }
   },
   created() {
-    this.getWeather()
+    this.getLocation()
   },
   methods: {
+    async getCity() {
+      const response = await fetch(`http://api.openweathermap.org/geo/1.0/reverse?lat=${this.location.coords.latitude}&lon=${this.location.coords.longitude}&appid=91274b03e3834f51cd2d05561eefe477`)
+      const data = await response.json()
+      this.city = data[0].name
+      console.log(this.city)
+    },
+    async getLocation() {
+      navigator.geolocation.getCurrentPosition(pos => {      
+        this.location = pos;      
+      }, err => {
+        console.log(`Error: ${err}`)
+      })
+    },
     async getWeather() {
-      const response = await fetch(
-        'https://api.openweathermap.org/data/2.5/weather?q=Kondopoga&units=metric&appid=91274b03e3834f51cd2d05561eefe477'
-      )
+      const response = await fetch('https://api.openweathermap.org/data/2.5/weather?q=Kondopoga&units=metric&appid=91274b03e3834f51cd2d05561eefe477')
       const data = await response.json()      
       this.icon = `https://openweathermap.org/img/wn/${data.weather[0].icon}.png`
       this.temperatureMax = Math.round(data.main.temp_max)
       this.temperatureMin = Math.round(data.main.temp_min)
       this.temperatureNow = Math.round(data.main.temp)
       this.weather = data.weather[0].description
-    }
+    },
+  },
+  watch: {
+    location(data) {
+      if (data !== null) {
+        this.getCity()
+        this.getWeather()
+      }
+    },
   }
 }
 </script>
