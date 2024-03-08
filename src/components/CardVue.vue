@@ -35,8 +35,8 @@ export default {
   },
   methods: {
     async getCity() {
-      const responseString = `https://api.openweathermap.org/geo/1.0/reverse?lat=${this.location.coords.latitude}&lon=${this.location.coords.longitude}&appid=91274b03e3834f51cd2d05561eefe477`
-      const response = await fetch(responseString)
+      const responseString = `https://api.openweathermap.org/geo/1.0/reverse?lat=62.21&lon=39&appid=91274b03e3834f51cd2d05561eefe477`
+      const response = await fetch(`https://api.openweathermap.org/geo/1.0/reverse?lat=62.21&lon=39&appid=91274b03e3834f51cd2d05561eefe477`)
       const data = await response.json()
       this.city = data[0].name
     }, 
