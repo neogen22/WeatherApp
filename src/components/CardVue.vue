@@ -33,20 +33,16 @@ export default {
     this.getLocation()
     this.getWeather()
   },
-  mounted() {
-
-
-  },
   methods: {
     async getCity() {
-      const response = await fetch(`https://api.openweathermap.org/geo/1.0/reverse?lat=62.21&lon=34.25&appid=91274b03e3834f51cd2d05561eefe477`)
+      const responseString = `https://api.openweathermap.org/geo/1.0/reverse?lat=${this.location.coords.latitude}&lon=${this.location.coords.longitude}&appid=91274b03e3834f51cd2d05561eefe477`
+      const response = await fetch(responseString)
       const data = await response.json()
       this.city = data[0].name
     }, 
     getLocation() {
       navigator.geolocation.getCurrentPosition(pos => {      
         this.location = pos;
-        console.log(this.location)
       }, err => {
         console.log(`Error: ${err}`)
       })
@@ -59,19 +55,14 @@ export default {
       this.temperatureMin = Math.round(data.main.temp_min)
       this.temperatureNow = Math.round(data.main.temp)
       this.weather = data.weather[0].description
-      this.getCity()
     },
   },
   watch: {
     location(data) {
       if (data !== null) {
         this.getCity()
-        
       }
     },
-    city(d) {
-      console.log(d)
-    }
   }
 }
 </script>
