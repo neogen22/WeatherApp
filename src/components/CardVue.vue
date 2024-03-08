@@ -17,7 +17,7 @@ import { DateTime } from 'luxon'
 export default {
   data() {
     return {
-      city: null,      
+      city: 'Paris',      
       day: DateTime.now().setLocale('en-GB').day,
       icon: null,      
       location: null,
@@ -26,26 +26,35 @@ export default {
       temperatureMin: null,
       temperatureNow: null,
       weather: null,
-      weekday: DateTime.now().setLocale('en-GB').weekdayLong
+      weekday: DateTime.now().setLocale('en-GB').weekdayLong,
+      error: 'qqq',
+      lat: null,
+      lon: null
     }
   },
-  created() {
+  mounted() {    
     this.getLocation()
     this.getWeather()
-  },
+  }, 
   methods: {
     async getCity() {
-      const responseString = `https://api.openweathermap.org/geo/1.0/reverse?lat=62.21&lon=39&appid=91274b03e3834f51cd2d05561eefe477`
-      const response = await fetch(`https://api.openweathermap.org/geo/1.0/reverse?lat=62.21&lon=39&appid=91274b03e3834f51cd2d05561eefe477`)
+      fetch(`https://api.openweathermap.org/geo/1.0/reverse?lat=${this.lat}&lon=${this.lon}&appid=91274b03e3834f51cd2d05561eefe477`)
+      .then((response) => response.json())
+      .then((data) => this.city = data[0].name)
+      .catch((error) => {
+        this.error = error
+      })
+      /* const response = await fetch(responseString)
       const data = await response.json()
-      this.city = data[0].name
+      this.city = data[0].name */
     }, 
-    getLocation() {
-      navigator.geolocation.getCurrentPosition(pos => {      
-        this.location = pos;
+    async getLocation() {
+      navigator.geolocation.getCurrentPosition(pos => {        
+        this.lat = pos.coords.latitude
+        this.lon = pos.coords.longitude        
       }, err => {
         console.log(`Error: ${err}`)
-      })
+      })      
     },
     async getWeather() {
       const response = await fetch('https://api.openweathermap.org/data/2.5/weather?q=Kondopoga&units=metric&appid=91274b03e3834f51cd2d05561eefe477')
@@ -58,7 +67,7 @@ export default {
     },
   },
   watch: {
-    location(data) {
+    lat(data) {
       if (data !== null) {
         this.getCity()
       }
