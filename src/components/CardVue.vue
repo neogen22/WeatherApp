@@ -31,17 +31,22 @@ export default {
   },
   created() {
     this.getLocation()
+    this.getWeather()
+  },
+  mounted() {
+
+
   },
   methods: {
     async getCity() {
       const response = await fetch(`https://api.openweathermap.org/geo/1.0/reverse?lat=${this.location.coords.latitude}&lon=${this.location.coords.longitude}&appid=91274b03e3834f51cd2d05561eefe477`)
       const data = await response.json()
       this.city = data[0].name
-      console.log(this.city)
-    },
-    async getLocation() {
+    }, 
+    getLocation() {
       navigator.geolocation.getCurrentPosition(pos => {      
-        this.location = pos;      
+        this.location = pos;
+        console.log(this.location)
       }, err => {
         console.log(`Error: ${err}`)
       })
@@ -54,15 +59,19 @@ export default {
       this.temperatureMin = Math.round(data.main.temp_min)
       this.temperatureNow = Math.round(data.main.temp)
       this.weather = data.weather[0].description
+      this.getCity()
     },
   },
   watch: {
     location(data) {
       if (data !== null) {
         this.getCity()
-        this.getWeather()
+        
       }
     },
+    city(d) {
+      console.log(d)
+    }
   }
 }
 </script>
