@@ -2,7 +2,6 @@
   <div class="card">
     <div class="temperature">{{ temperatureNow }}°</div>    
     <div class="city">{{city}}</div>
-    <div class="city">{{lon}}</div>
     <div class="bottom">      
       <div class="date">{{ weekday }}, {{ day }} {{ month }}</div>
       <div class="flex">
@@ -18,24 +17,17 @@ import { DateTime } from 'luxon'
 export default {
   data() {
     return {
-      city: 'Paris',      
+      city: null,      
       day: DateTime.now().setLocale('en-GB').day,
-      icon: null,      
-      location: null,
+      icon: null,
       month: DateTime.now().setLocale('en-GB').monthLong,
       temperatureMax: null,
       temperatureMin: null,
       temperatureNow: null,
       weather: null,
       weekday: DateTime.now().setLocale('en-GB').weekdayLong,
-      error: 'qqq',
       lat: null,
       lon: null,
-    }
-  },
-  computed: {
-    returnAPICity() {
-      return 'https://api.openweathermap.org/geo/1.0/reverse?lat=' + this.lat + '&lon=' + this.lon + '&appid=91274b03e3834f51cd2d05561eefe477'
     }
   },
   methods: {    
@@ -52,29 +44,27 @@ export default {
       const response = await fetch('https://api.openweathermap.org/geo/1.0/reverse?lat=' + this.lat + '&lon=' + this.lon + '&appid=91274b03e3834f51cd2d05561eefe477')
       const data = await response.json()
       this.city = data[0].name      
-    }
-  },
-  mounted() {
-    this.getLocation()    
-  }
-}
-    /* async getWeather() {      
-      const response = await fetch('https://api.openweathermap.org/data/2.5/weather?q=Kondopoga&units=metric&appid=91274b03e3834f51cd2d05561eefe477')
-      console.log(this.lat)
-      console.log(this.lon)
-      let q = 'https://api.openweathermap.org/geo/1.0/reverse?lat=' + 62 + '&lon=' + this.lon + '&appid=91274b03e3834f51cd2d05561eefe477'
-      console.log(this.r)
-      const response2 = await fetch(this.r)
+    },
+    async getWeather() {
+      const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${this.city}&units=metric&appid=91274b03e3834f51cd2d05561eefe477`)
       const data = await response.json()
-      const data2 = await response2.json()      
-      this.icon = `https://openweathermap.org/img/wn/${data.weather[0].icon}.png`
       this.temperatureMax = Math.round(data.main.temp_max)
       this.temperatureMin = Math.round(data.main.temp_min)
       this.temperatureNow = Math.round(data.main.temp)
       this.weather = data.weather[0].description
-      this.city = data2[0].name
-    }, */
-
+    }
+  },
+  mounted() {
+    this.getLocation()    
+  },
+  watch: {
+    city(arg) {
+      if (arg !== null) {
+        this.getWeather()
+      }
+    }
+  }
+}
 </script>
 <style scoped>
 .bottom {
