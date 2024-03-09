@@ -12,6 +12,7 @@
       <div class="temperature-max-and-min">{{ temperatureMin }}° / {{ temperatureMax }}°</div>
     </div>
   </div> -->
+  <div>loaded</div>
   <div>{{ lat }}</div>
   <div>{{ lon }}</div>
   <div>{{ city }}</div>
@@ -42,12 +43,7 @@
             
         },
         mounted() {
-            setTimeout(() => {
-                console.log(this.lat)
-                fetch('https://api.openweathermap.org/geo/1.0/reverse?lat=' + this.lat + '&lon=' + this.lon + '&appid=91274b03e3834f51cd2d05561eefe477').
-                then(response => response.json())
-                .then(data => this.city = data[0].name)
-            }, 1000)
+
 
 
         }
