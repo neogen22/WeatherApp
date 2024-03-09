@@ -1,7 +1,9 @@
 <template>  
   <div class="card">
-    <div class="temperature">{{ temperatureNow }}°</div>    
-    <div class="city">{{city}}</div>
+    <div class="upper-part-card">
+      <div class="temperature">{{ temperatureNow }}°</div>    
+      <div class="city">{{city}}</div>
+    </div>
     <div class="bottom">      
       <div class="date">{{ weekday }}, {{ day }} {{ month }}</div>
       <div class="flex">
@@ -20,14 +22,14 @@ export default {
       city: null,      
       day: DateTime.now().setLocale('en-GB').day,
       icon: null,
+      lat: null,
+      lon: null,
       month: DateTime.now().setLocale('en-GB').monthLong,
       temperatureMax: null,
       temperatureMin: null,
       temperatureNow: null,
       weather: null,
       weekday: DateTime.now().setLocale('en-GB').weekdayLong,
-      lat: null,
-      lon: null,
     }
   },
   methods: {    
@@ -35,7 +37,6 @@ export default {
       navigator.geolocation.getCurrentPosition(pos => {        
         this.lat = pos.coords.latitude
         this.lon = pos.coords.longitude
-        this.getCity()
       }, err => {
         console.log(`Error: ${err}`)
       })      
@@ -43,21 +44,27 @@ export default {
     async getCity() {
       const response = await fetch('https://api.openweathermap.org/geo/1.0/reverse?lat=' + this.lat + '&lon=' + this.lon + '&appid=91274b03e3834f51cd2d05561eefe477')
       const data = await response.json()
-      this.city = data[0].name      
+      this.city = data[0].name.toUpperCase()    
     },
     async getWeather() {
       const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${this.city}&units=metric&appid=91274b03e3834f51cd2d05561eefe477`)
       const data = await response.json()
+      this.icon = `https://openweathermap.org/img/wn/${data.weather[0].icon}.png`
       this.temperatureMax = Math.round(data.main.temp_max)
       this.temperatureMin = Math.round(data.main.temp_min)
       this.temperatureNow = Math.round(data.main.temp)
-      this.weather = data.weather[0].description
+      this.weather = data.weather[0].description[0].toUpperCase() + data.weather[0].description.slice(1)
     }
   },
   mounted() {
     this.getLocation()    
   },
   watch: {
+    lat(arg) {
+      if (arg !== null) {
+        this.getCity()
+      }
+    },
     city(arg) {
       if (arg !== null) {
         this.getWeather()
@@ -94,9 +101,11 @@ export default {
   line-height: 20px;
   letter-spacing: 1px;
   padding-left: 25px;
+  margin-top: -3px;
+  
 }
 .date {
-  color: rgb(25, 25, 25);
+  color: rgba(25, 25, 25, 70%);
   font-family: 'Open Sans';
   font-size: 15px;
   font-weight: 700;
@@ -120,9 +129,10 @@ export default {
   letter-spacing: -2%;
   line-height: 54px;
   padding-left: 36px;
+  padding-top: 15px;
 }
 .temperature-max-and-min {
-  color: rgb(107, 107, 107);
+  color: rgba(107, 107, 107, 40%);
   font-family: 'Open Sans';
   font-size: 12px;
   font-weight: 700;
@@ -131,11 +141,14 @@ export default {
   padding-top: 2px;  
   text-align: left;
 }
+.upper-part-card {
+  height: 75px;
+}
 .weather {
-  color: rgb(107, 107, 107);
+  color: rgba(107, 107, 107, 40%);
   font-family: 'Open Sans';
   font-size: 12px;
-  font-weight: 700;
+  font-weight: bold;
   letter-spacing: 0px;
   line-height: 16px;
   padding-top: 6px;
