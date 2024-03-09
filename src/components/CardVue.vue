@@ -31,8 +31,6 @@ export default {
       error: 'qqq',
       lat: null,
       lon: null,
-      changed: false,
-      r: null
     }
   },
   computed: {
@@ -45,26 +43,21 @@ export default {
       navigator.geolocation.getCurrentPosition(pos => {        
         this.lat = pos.coords.latitude
         this.lon = pos.coords.longitude
-        this.changed = true       
-        
+        this.getCity()
       }, err => {
         console.log(`Error: ${err}`)
       })      
-    },  
-  },
-  async mounted() {
-    this.getLocation()
-    console.log(this.lat)
-  },
-  watch: {
-    lon(r) {
-      if (r !== null) {
-        this.lon ='2222'
-      }
+    },
+    async getCity() {
+      const response = await fetch('https://api.openweathermap.org/geo/1.0/reverse?lat=' + this.lat + '&lon=' + this.lon + '&appid=91274b03e3834f51cd2d05561eefe477')
+      const data = await response.json()
+      this.city = data[0].name      
     }
+  },
+  mounted() {
+    this.getLocation()    
   }
 }
-
     /* async getWeather() {      
       const response = await fetch('https://api.openweathermap.org/data/2.5/weather?q=Kondopoga&units=metric&appid=91274b03e3834f51cd2d05561eefe477')
       console.log(this.lat)
