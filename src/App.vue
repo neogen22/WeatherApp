@@ -29,28 +29,26 @@
               }
           },
           methods: {
-              async getLocation() {
-                this.getL='qqe'
-                  navigator.geolocation.getCurrentPosition(pos => {
-                      this.lat = pos.coords.latitude
-                      this.getL = pos.coords.longitude
-                  })
+              getLocation() {                
+                navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    console.log(position);
+                    this.lat = position.coords.latitude
+                    this.lon = position.coords.longitude
+                },
+                (error) => console.log(new Date(), error),
+                { enableHighAccuracy: false, timeout: 5000},
+            );
               },
-              async getCity() {
-                  
-                  
-              }
           },
           created() {
+            this.getLocation()
+  
               
               
           },
           mounted() {
-            this.getLocation()
-            setTimeout(() => {
-              this.lat = 'qqq'              
-            }, 150);
-  
+            
   
   
           }
