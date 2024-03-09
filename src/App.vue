@@ -1,8 +1,8 @@
 <script>
-import CardVue from './components/CardVue.vue'
+import CardVue2 from './components/CardVue2.vue'
 export default {
   components: {
-    CardVue
+    CardVue2
   }
 }
 </script>
@@ -14,7 +14,7 @@ export default {
     href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
     rel="stylesheet"
   />
-  <CardVue />
+  <CardVue2 />
 </template>
 
 <style scoped>

@@ -1,7 +1,8 @@
-<template>
+<template>  
   <div class="card">
     <div class="temperature">{{ temperatureNow }}°</div>    
     <div class="city">{{city}}</div>
+    <div class="city">{{lon}}</div>
     <div class="bottom">      
       <div class="date">{{ weekday }}, {{ day }} {{ month }}</div>
       <div class="flex">
@@ -29,51 +30,58 @@ export default {
       weekday: DateTime.now().setLocale('en-GB').weekdayLong,
       error: 'qqq',
       lat: null,
-      lon: null
+      lon: null,
+      changed: false,
+      r: null
     }
   },
-  mounted() {    
-    this.getLocation()
-    this.getWeather()
-  }, 
-  methods: {
-    async getCity() {
-      fetch(`https://api.openweathermap.org/geo/1.0/reverse?lat=${this.lat}&lon=${this.lon}&appid=91274b03e3834f51cd2d05561eefe477`)
-      .then((response) => response.json())
-      .then((data) => this.city = data[0].name)
-      .catch((error) => {
-        this.error = error
-      })
-      /* const response = await fetch(responseString)
-      const data = await response.json()
-      this.city = data[0].name */
-    }, 
-    async getLocation() {
+  computed: {
+    returnAPICity() {
+      return 'https://api.openweathermap.org/geo/1.0/reverse?lat=' + this.lat + '&lon=' + this.lon + '&appid=91274b03e3834f51cd2d05561eefe477'
+    }
+  },
+  methods: {    
+    getLocation() {
       navigator.geolocation.getCurrentPosition(pos => {        
         this.lat = pos.coords.latitude
-        this.lon = pos.coords.longitude        
+        this.lon = pos.coords.longitude
+        this.changed = true       
+        
       }, err => {
         console.log(`Error: ${err}`)
       })      
-    },
-    async getWeather() {
+    },  
+  },
+  async mounted() {
+    this.getLocation()
+    console.log(this.lat)
+  },
+  watch: {
+    lon(r) {
+      if (r !== null) {
+        this.lon ='2222'
+      }
+    }
+  }
+}
+
+    /* async getWeather() {      
       const response = await fetch('https://api.openweathermap.org/data/2.5/weather?q=Kondopoga&units=metric&appid=91274b03e3834f51cd2d05561eefe477')
-      const data = await response.json()      
+      console.log(this.lat)
+      console.log(this.lon)
+      let q = 'https://api.openweathermap.org/geo/1.0/reverse?lat=' + 62 + '&lon=' + this.lon + '&appid=91274b03e3834f51cd2d05561eefe477'
+      console.log(this.r)
+      const response2 = await fetch(this.r)
+      const data = await response.json()
+      const data2 = await response2.json()      
       this.icon = `https://openweathermap.org/img/wn/${data.weather[0].icon}.png`
       this.temperatureMax = Math.round(data.main.temp_max)
       this.temperatureMin = Math.round(data.main.temp_min)
       this.temperatureNow = Math.round(data.main.temp)
       this.weather = data.weather[0].description
-    },
-  },
-  watch: {
-    lat(data) {
-      if (data !== null) {
-        this.getCity()
-      }
-    },
-  }
-}
+      this.city = data2[0].name
+    }, */
+
 </script>
 <style scoped>
 .bottom {
