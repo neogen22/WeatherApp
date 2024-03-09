@@ -16,6 +16,7 @@
     <div>{{ lat }}</div>
     <div>{{ lon }}</div>
     <div>{{ city }}</div>
+    <div>{{ getL }}</div>
   </template>
   <script>
       export default {
@@ -23,14 +24,16 @@
               return {
                   lat: 'zzzz',
                   lon: null,
-                  city: null
+                  city: null,
+                  getL: 'zzz'
               }
           },
           methods: {
               async getLocation() {
+                this.getL='qqe'
                   navigator.geolocation.getCurrentPosition(pos => {
                       this.lat = pos.coords.latitude
-                      this.lon = pos.coords.longitude
+                      this.getL = pos.coords.longitude
                   })
               },
               async getCity() {
@@ -42,8 +45,11 @@
               
               
           },
-          async mounted() {
+          mounted() {
             this.getLocation()
+            setTimeout(() => {
+              this.lat = 'qqq'              
+            }, 150);
   
   
   
